@@ -1,0 +1,29 @@
+감염관리 Smart Monitoring System — 웹 배포 안내
+
+구성
+  index.html          : 시스템 전체 (서버 프로그램 불필요, 정적 파일 1개)
+  supabase-setup.sql  : 공용 데이터베이스 생성 스크립트
+
+1) 공용 데이터베이스 (Supabase, 무료)
+  - https://supabase.com 가입 → New project (Region: Northeast Asia (Seoul))
+  - SQL Editor → supabase-setup.sql 내용 붙여넣기 → Run
+  - Project Settings → API 에서 Project URL, anon public key 복사
+
+2) 웹 주소 만들기 (택 1)
+  A. Netlify  : https://app.netlify.com/drop 에 deploy 폴더를 끌어다 놓기 → 고정 주소 생성
+  B. Vercel   : https://vercel.com/new → 폴더 업로드
+  C. 사내 웹서버(IIS/Apache/Nginx) : index.html 을 웹 루트에 복사 (HTTPS 권장)
+
+3) 최초 연결 (관리자 1회)
+  - 생성된 주소 접속 → 시스템 관리자 로그인 → 데이터 공유 설정
+  - Supabase URL, anon key, 기관 코드, 접속 비밀키 입력 → "연결 확인 후 저장"
+  - "다른 PC 연결 링크 복사" → 다른 사용자에게 전달 (링크를 한 번 열면 해당 PC가 자동 연결됨)
+
+동작
+  - 모든 PC가 같은 데이터(환자, 검사, 결과, 직원·권한, 기준정보)를 사용합니다.
+  - 변경은 약 1초 내 저장되고, 다른 PC에는 약 8초 내(창을 다시 보면 즉시) 반영됩니다.
+
+운영 전 확인 (중요)
+  - 실제 환자정보는 개인정보보호법·의료법 적용 대상입니다. 병원 정보보안 담당자 검토 후 사용하십시오.
+  - 현재 로그인은 화면 단 인증입니다. 실운영 시 서버 인증(Supabase Auth 등)과 접근 IP 제한을 권장합니다.
+  - 검토 전에는 가상 데이터로만 시험하십시오.
