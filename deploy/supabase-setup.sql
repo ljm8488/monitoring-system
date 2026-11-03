@@ -2,7 +2,7 @@
 -- Supabase 대시보드 → SQL Editor → New query → 전체 붙여넣기 → Run
 --
 -- ■ 실행 방법
---   · 처음 설치 : 맨 아래 [2. 기관 등록]의 '기관코드'와 '접속비밀키'를 원하는 값으로 바꾼 뒤 전체 실행
+--   · 처음 설치 : 맨 아래 [2. 기관 등록]의 '기관코드'와 비밀키를 원하는 값으로 바꾼 뒤 전체 실행
 --   · 이미 사용 중인 DB : 그대로 전체 실행해도 안전합니다.
 --       - 테이블·데이터는 지우지 않습니다 (create if not exists / create or replace 만 사용).
 --       - 기관 등록은 이미 있는 기관이면 건너뜁니다 (비밀키가 바뀌지 않음).
@@ -102,10 +102,11 @@ grant execute on function public.sms_get(text, text) to anon;
 grant execute on function public.sms_put(text, text, text, jsonb, text) to anon;
 
 -- ═══ 2. 기관 등록 (처음 한 번) ════════════════════════════════════════
--- '기관코드', '접속비밀키'를 바꿔서 실행 (비밀키는 16자 이상 권장)
+-- '기관코드', '여기에-16자-이상-비밀키'를 반드시 바꿔서 실행 (비밀키는 16자 이상, 추측하기 어려운 값)
+-- ※ 예시 값 그대로 실행하면 이 공개 문서를 본 누구나 접속할 수 있습니다. 앱은 12자 미만·예시 비밀키로는 연결하지 않습니다.
 -- 이미 등록된 기관이면 아무것도 바꾸지 않습니다.
 insert into public.sms_site(site, secret_hash)
-values ('기관코드', extensions.crypt('접속비밀키', extensions.gen_salt('bf')))
+values ('기관코드', extensions.crypt('여기에-16자-이상-비밀키', extensions.gen_salt('bf')))
 on conflict (site) do nothing;
 
 -- ═══ 3. 비밀키 변경 (필요할 때만 주석 해제) ══════════════════════════
