@@ -1,0 +1,32 @@
+감염관리 Smart Monitoring System — 알림 메일 실제 발송 설정 안내
+
+앱의 알림(신규 양성·오더 미등록 등)을 Gmail로 실제 발송하려면 메일 서버(Supabase Edge Function)를 한 번 설치해야 합니다.
+설치 전에는 '자동 발송'을 켜도 발송 기록만 남고 메일은 나가지 않습니다 (앱에 '실제 발송 안 됨'으로 표시).
+
+1) 발송용 Gmail 앱 비밀번호 만들기
+  - 알림을 보낼 Gmail 계정으로 로그인 → Google 계정 관리 → 보안 → 2단계 인증 켜기
+  - 같은 화면의 '앱 비밀번호' → 앱 이름(예: 감염관리 알림) 입력 → 만들기 → 16자리 비밀번호 복사
+  - 이 비밀번호는 아래 2)에서 한 번만 입력하고 다른 곳에 적어두지 마십시오.
+
+2) 메일 서버 설치 (Supabase 대시보드에서)
+  - Supabase 대시보드 → 해당 프로젝트 → Edge Functions → Deploy a new function → Via Editor
+  - 함수 이름: sms-mail
+  - 저장소의 supabase/functions/sms-mail/index.ts 내용을 전부 붙여넣기 → Deploy
+  - 배포 후 함수 설정에서 'Verify JWT'(JWT 검사)를 끄기 (앱이 기관 코드·비밀키로 직접 확인합니다)
+  - Edge Functions → Secrets(비밀값)에 두 개 추가
+      GMAIL_USER          = 발송용 Gmail 주소 (예: infection.alert@gmail.com)
+      GMAIL_APP_PASSWORD  = 1)에서 만든 16자리 앱 비밀번호
+
+  (Supabase CLI를 쓰는 경우)
+      supabase functions deploy sms-mail --no-verify-jwt
+      supabase secrets set GMAIL_USER=발송용주소 GMAIL_APP_PASSWORD=앱비밀번호
+
+3) 앱에서 켜기
+  - 시스템 관리자 로그인 → 알림 → Gmail 알림 설정 → '메일 서버로 실제 발송' [연결 확인]
+  - 확인되면 [사용]으로 바꾸고 [테스트 메일 보내기]로 내 메일함에 도착하는지 확인
+  - 자동 발송을 켜면 새 알림이 생길 때 설정된 유형·수신자에게 메일이 자동으로 나갑니다.
+
+보안 · 개인정보
+  - 메일은 그 기관 직원 계정(설정관리)에 등록된 이메일로만 발송됩니다. 다른 주소는 서버가 무시합니다.
+  - 메일 본문의 환자 이름·등록번호는 가려서 보냅니다 (예: 김*랑, 12**56). 자세한 내용은 앱에서 확인하도록 안내합니다.
+  - Gmail 무료 계정은 하루 발송량 제한(약 500통)이 있습니다.
